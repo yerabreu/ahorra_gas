@@ -47,7 +47,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/img/logo.png
-    - lib/assets/img/gasprice.gif
+    - lib/assets/img/
+    - lib/assets/icons/
 
 

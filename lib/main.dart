@@ -1,4 +1,5 @@
-import 'package:ahorra_gas/core/principal_color.dart';
+import 'package:ahorra_gas/color/color_app.dart';
+import 'package:ahorra_gas/screens/home/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -27,9 +29,11 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+  
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Image.asset(
             'lib/assets/img/logo.png',
             width: 200,
-            height: 100,
+            height: 200,
             fit: BoxFit.cover,
           ),
         ),
@@ -63,16 +67,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 200,
                   child: Center(
                     child: Material(
-                      child: Container(
+                      child: SizedBox(
                         width: 300,
                         height: 50,
                         child: FloatingActionButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => const PrincipalScreen(), // Cambia a la pantalla de inicio
+                              ),
+                            );
+                          },
                           heroTag: 'principal',
                           backgroundColor: ColorApp.colorButton,
                           foregroundColor: ColorApp.letterColor,
