@@ -1,4 +1,3 @@
-import 'package:ahorra_gas/components/nav/bottom_nav.dart';
 import 'package:ahorra_gas/components/nav/up_nav.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,6 @@ class _FuelNintyFiveState extends State<FuelNintyFive> {
     return Scaffold(
       appBar: UpNav(),
       body: Center(child: Text("Hola 95")),
-      bottomNavigationBar: BottomNavMenu(),
     );
   }
 }

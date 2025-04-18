@@ -2,6 +2,8 @@ import 'package:ahorra_gas/color/color_app.dart';
 import 'package:flutter/material.dart';
 
 class UpNav extends StatelessWidget implements PreferredSizeWidget {
+  const UpNav({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AppBar(

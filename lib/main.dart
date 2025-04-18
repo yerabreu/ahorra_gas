@@ -1,5 +1,4 @@
-import 'package:ahorra_gas/color/color_app.dart';
-import 'package:ahorra_gas/screens/home/home.dart';
+import 'package:ahorra_gas/screens/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,101 +12,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'AhorraGas',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'AhorraGas'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-  
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorApp.principalColor,
-        foregroundColor: ColorApp.letterColor,
-        toolbarHeight: 230,
-        flexibleSpace: Center(
-          child: Image.asset(
-            'lib/assets/img/logo.png',
-            width: 200,
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 400,
-                  color: const Color.fromARGB(255, 73, 0, 0),
-                  child: Image.asset(
-                    'lib/assets/img/gasprice.gif',
-                    width: double.infinity,
-                    height: 300,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 200,
-                  child: Center(
-                    child: Material(
-                      child: SizedBox(
-                        width: 300,
-                        height: 50,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context, 
-                              MaterialPageRoute(
-                                builder: (context) => const PrincipalScreen(), // Cambia a la pantalla de inicio
-                              ),
-                            );
-                          },
-                          heroTag: 'principal',
-                          backgroundColor: ColorApp.colorButton,
-                          foregroundColor: ColorApp.letterColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            '¡Empieza ahorrar!',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      home: const WelcomeScreen(), 
     );
   }
 }

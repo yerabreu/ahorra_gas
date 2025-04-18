@@ -1,4 +1,3 @@
-import 'package:ahorra_gas/components/nav/bottom_nav.dart';
 import 'package:ahorra_gas/components/nav/drawer_nav.dart';
 import 'package:ahorra_gas/components/nav/up_nav.dart';
 import 'package:ahorra_gas/components/fuel/widget_fuel_type.dart';
@@ -70,7 +69,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                           },
                           child: WidgetFuelType(title: "Gasolina 95", iconPath: 'lib/assets/icons/hose.png',),
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -84,7 +83,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                           },
                           child: WidgetFuelType(title: "Gasolina 98", iconPath:'lib/assets/icons/pump.png'),
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -145,7 +144,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
         ],
       ),
 
-      bottomNavigationBar: BottomNavMenu() 
     );
   }
 }
