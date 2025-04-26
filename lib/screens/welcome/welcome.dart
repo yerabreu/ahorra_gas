@@ -1,9 +1,25 @@
-import 'package:ahorra_gas/color/color_app.dart';
-import 'package:ahorra_gas/components/nav/main_nav.dart';
 import 'package:flutter/material.dart';
+import 'package:ahorra_gas/components/ubication/my_location.dart';
+import 'package:ahorra_gas/components/nav/main_nav.dart';
+import 'package:ahorra_gas/color/color_app.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
+
+  Future<void> _handleStart(BuildContext context) async {
+    bool permiso = await checkAndRequestLocationPermission();
+
+    if (permiso) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainNavScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Se necesitan permisos de ubicación')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +49,6 @@ class WelcomeScreen extends StatelessWidget {
                   color: const Color.fromARGB(255, 73, 0, 0),
                   child: Image.asset(
                     'lib/assets/img/gasprice.gif',
-                    width: double.infinity,
-                    height: 300,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -47,15 +61,7 @@ class WelcomeScreen extends StatelessWidget {
                         width: 300,
                         height: 50,
                         child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const MainNavScreen(), 
-                              ),
-                            );
-                          },
+                          onPressed: () => _handleStart(context),
                           heroTag: 'principal',
                           backgroundColor: ColorApp.colorButton,
                           foregroundColor: ColorApp.letterColor,

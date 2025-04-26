@@ -1,19 +1,20 @@
-import 'package:ahorra_gas/components/nav/up_nav.dart';
 import 'package:flutter/material.dart';
 
-class FuelNintyFive extends StatefulWidget {
+class FuelNintyFive extends StatelessWidget {
   const FuelNintyFive({super.key});
 
   @override
-  State<FuelNintyFive> createState() => _FuelNintyFiveState();
-}
-
-class _FuelNintyFiveState extends State<FuelNintyFive> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: UpNav(),
-      body: Center(child: Text("Hola 95")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Gasolina 95", style: TextStyle(fontSize: 24)),
+            // Aquí puedes añadir el contenido de esta pantalla, como más widgets
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'package:ahorra_gas/components/nav/drawer_nav.dart';
-import 'package:ahorra_gas/components/nav/up_nav.dart';
 import 'package:ahorra_gas/components/fuel/widget_fuel_type.dart';
 import 'package:ahorra_gas/color/color_app.dart';
 import 'package:ahorra_gas/screens/fuel_type/fuel_diesel.dart';
@@ -12,6 +10,7 @@ class PrincipalScreen extends StatefulWidget {
 
   @override
   State<PrincipalScreen> createState() => _PrincipalScreenState();
+  
 }
 
 class _PrincipalScreenState extends State<PrincipalScreen> {
@@ -19,8 +18,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   Widget build(BuildContext context) {
     
     return Scaffold(
-      drawer: DrawerNav(),
-      appBar: UpNav(),
       body: ListView(
         children: [
           Padding(
