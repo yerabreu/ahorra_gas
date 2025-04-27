@@ -21,6 +21,7 @@ class MyLocation extends StatefulWidget {
   const MyLocation({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyLocationState createState() => _MyLocationState();
 }
 
@@ -39,6 +40,7 @@ class _MyLocationState extends State<MyLocation> {
     }
 
     Position position = await Geolocator.getCurrentPosition(
+      // ignore: deprecated_member_use
       desiredAccuracy: LocationAccuracy.high,
     );
 
