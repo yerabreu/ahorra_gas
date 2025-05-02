@@ -5,7 +5,7 @@ import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:ahorra_gas/components/station/gas_station_logo_maker.dart'; 
+import 'package:ahorra_gas/components/station/gas_station_logo_maker.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -62,21 +62,25 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  // Mejorado para buscar el logo según la primera palabra del nombre de la estación
   String _getLogoPath(String stationName) {
-    switch (stationName.toLowerCase()) {
-      case 'cepsa':
-        return 'lib/assets/gaslogo/cepsa.png';
-      case 'repsol':
-        return 'lib/assets/gaslogo/repsol.png';
-      case 'disa':
-        return 'lib/assets/gaslogo/disa.png';
-      case 'pcan':
-        return 'lib/assets/gaslogo/pcan.jpeg';
-      case 'shell':
-        return 'lib/assets/gaslogo/shell.png';
-      default:
-        return 'lib/assets/gaslogo/default.jpg'; 
-    }
+    // Extraemos la primera palabra del nombre
+    String firstWord = stationName.split(' ').first.toLowerCase().trim();
+
+    // Mapa de gasolineras con la primera palabra como clave
+    Map<String, String> logoMapping = {
+      'bp': 'lib/assets/gaslogo/bp.png',
+      'cepsa': 'lib/assets/gaslogo/cepsa.jpg',
+      'disa': 'lib/assets/gaslogo/disa.jpeg',
+      'pcan': 'lib/assets/gaslogo/pcan.jpeg',
+      'repsol': 'lib/assets/gaslogo/repsol.jpeg',
+      'shell': 'lib/assets/gaslogo/shell.png',
+      'canary': 'lib/assets/gaslogo/canaryoil.png',
+      'tgas': 'lib/assets/gaslogo/tgas.jpg',
+    };
+
+    // Devolvemos el logo correspondiente o un logo por defecto
+    return logoMapping[firstWord] ?? 'lib/assets/gaslogo/default.png';
   }
 
   @override
@@ -105,17 +109,23 @@ class _MapScreenState extends State<MapScreen> {
                     ..._stations.map((station) {
                       return Marker(
                         point: LatLng(station.latitude, station.longitude),
-                        width: 55, // Tamaño ajustado del marcador
-                        height: 55, // Tamaño ajustado del marcador
+                        width: 40, // Tamaño ajustado del marcador
+                        height: 40, // Tamaño ajustado del marcador
                         child: Tooltip(
                           message: '${station.name}\n${station.fuelPrice} €/L',
-                          child: GasStationLogoMarker(
-                            logoPath: _getLogoPath(station.name), 
-                            size: 50.0, // Ajustamos el tamaño del logo de la gasolinera
+                          child: CircleAvatar(
+                            radius: 25.0, // Radio ajustado para el círculo
+                            backgroundColor: Colors.white, // Fondo blanco del círculo
+                            child: ClipOval(
+                              child: Image.asset(
+                                _getLogoPath(station.name),
+                                fit: BoxFit.contain, // Ajuste para mantener la imagen sin distorsión
+                              ),
+                            ),
                           ),
                         ),
                       );
-                    }),
+                    }).toList(),
                   ],
                 ),
               ],
