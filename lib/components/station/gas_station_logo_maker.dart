@@ -6,11 +6,11 @@ class GasStationLogoMarker extends StatelessWidget {
   final Color backgroundColor; // Color de fondo de la burbuja
 
   const GasStationLogoMarker({
-    Key? key,
+    super.key,
     required this.logoPath,
     this.size = 40.0,
     this.backgroundColor = Colors.white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +22,7 @@ class GasStationLogoMarker extends StatelessWidget {
         borderRadius: BorderRadius.circular(size / 2), // Esto crea la forma redonda
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.2),
             blurRadius: 5,
             offset: Offset(0, 3),

@@ -5,7 +5,6 @@ import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:ahorra_gas/components/station/gas_station_logo_maker.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -17,6 +16,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _currentPosition;
   List<GasStation> _stations = [];
+  GasStation? _selectedStation;
 
   @override
   void initState() {
@@ -37,6 +37,7 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     Position position = await Geolocator.getCurrentPosition(
+      // ignore: deprecated_member_use
       desiredAccuracy: LocationAccuracy.high,
     );
 
@@ -62,12 +63,8 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  // Mejorado para buscar el logo según la primera palabra del nombre de la estación
   String _getLogoPath(String stationName) {
-    // Extraemos la primera palabra del nombre
     String firstWord = stationName.split(' ').first.toLowerCase().trim();
-
-    // Mapa de gasolineras con la primera palabra como clave
     Map<String, String> logoMapping = {
       'bp': 'lib/assets/gaslogo/bp.png',
       'cepsa': 'lib/assets/gaslogo/cepsa.jpg',
@@ -78,9 +75,42 @@ class _MapScreenState extends State<MapScreen> {
       'canary': 'lib/assets/gaslogo/canaryoil.png',
       'tgas': 'lib/assets/gaslogo/tgas.jpg',
     };
-
-    // Devolvemos el logo correspondiente o un logo por defecto
     return logoMapping[firstWord] ?? 'lib/assets/gaslogo/default.png';
+  }
+
+  void _showStationInfo(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Ajusta el tamaño al contenido
+      backgroundColor: Colors.transparent, // Fondo transparente para el contenedor
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0), // Padding más pequeño
+            color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Ajustar al contenido
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _selectedStation!.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text("Gasolina 95: ${_selectedStation!.fuelPrice95} €/L"),
+                Text("Gasolina 98: ${_selectedStation!.fuelPrice98} €/L"),
+                Text("Diésel: ${_selectedStation!.fuelPriceDiesel} €/L"),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Cerrar el bottomSheet
+                  },
+                  child: const Text("Cerrar", style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -109,23 +139,28 @@ class _MapScreenState extends State<MapScreen> {
                     ..._stations.map((station) {
                       return Marker(
                         point: LatLng(station.latitude, station.longitude),
-                        width: 40, // Tamaño ajustado del marcador
-                        height: 40, // Tamaño ajustado del marcador
-                        child: Tooltip(
-                          message: '${station.name}\n${station.fuelPrice} €/L',
+                        width: 40,
+                        height: 40,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedStation = station;
+                            });
+                            _showStationInfo(context); // Mostrar el modal
+                          },
                           child: CircleAvatar(
-                            radius: 25.0, // Radio ajustado para el círculo
-                            backgroundColor: Colors.white, // Fondo blanco del círculo
+                            radius: 25.0,
+                            backgroundColor: Colors.white,
                             child: ClipOval(
                               child: Image.asset(
                                 _getLogoPath(station.name),
-                                fit: BoxFit.contain, // Ajuste para mantener la imagen sin distorsión
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ],

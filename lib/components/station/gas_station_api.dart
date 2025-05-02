@@ -10,6 +10,7 @@ Future<int?> getMunicipioId(double lat, double lon) async {
     List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(lat, lon);
     String? municipioName = placemarks.first.locality;
 
+    // ignore: avoid_print
     print("📍 Municipio detectado por geolocalización: $municipioName");
 
     // Realizar la petición para obtener la lista de municipios de la API
@@ -20,6 +21,7 @@ Future<int?> getMunicipioId(double lat, double lon) async {
       
       // Mostrar los municipios obtenidos para depuración
       for (var m in data) {
+        // ignore: avoid_print
         print('🗺️ Municipio en API: ${m['nombreMunicipio']}');
       }
 
@@ -30,17 +32,21 @@ Future<int?> getMunicipioId(double lat, double lon) async {
       );
 
       if (municipio != null) {
+        // ignore: avoid_print
         print("🟡 Municipio ID: ${municipio['idMunicipio']}");
         return municipio['idMunicipio'];
       } else {
+        // ignore: avoid_print
         print("🔴 No se encontró municipio");
         return null;
       }
     } else {
+      // ignore: avoid_print
       print("❌ Error al obtener municipio: ${response.statusCode}");
       return null;
     }
   } catch (e) {
+    // ignore: avoid_print
     print("❌ Error al obtener municipio: $e");
     return null;
   }
@@ -57,6 +63,7 @@ Future<List<GasStation>> getGasStations(int municipioId) async {
       return [];
     }
   } catch (e) {
+    // ignore: avoid_print
     print("❌ Error al obtener estaciones: $e");
     return [];
   }
