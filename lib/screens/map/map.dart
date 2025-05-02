@@ -5,6 +5,7 @@ import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ahorra_gas/components/station/gas_station_logo_maker.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -16,7 +17,8 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _currentPosition;
   List<GasStation> _stations = [];
-  GasStation? _selectedStation;
+  bool _isInfoVisible = false; // Para controlar si mostrar la información de la gasolinera
+  GasStation? _selectedStation; // Para guardar la gasolinera seleccionada
 
   @override
   void initState() {
@@ -37,7 +39,6 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     Position position = await Geolocator.getCurrentPosition(
-      // ignore: deprecated_member_use
       desiredAccuracy: LocationAccuracy.high,
     );
 
@@ -78,36 +79,33 @@ class _MapScreenState extends State<MapScreen> {
     return logoMapping[firstWord] ?? 'lib/assets/gaslogo/default.png';
   }
 
+  // Método para mostrar el dialog de información de la gasolinera
   void _showStationInfo(BuildContext context) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true, // Ajusta el tamaño al contenido
-      backgroundColor: Colors.transparent, // Fondo transparente para el contenedor
+      barrierDismissible: true, // Permite cerrar el dialog al tocar fuera
       builder: (BuildContext context) {
-        return Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0), // Padding más pequeño
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Ajustar al contenido
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _selectedStation!.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                Text("Gasolina 95: ${_selectedStation!.fuelPrice95} €/L"),
-                Text("Gasolina 98: ${_selectedStation!.fuelPrice98} €/L"),
-                Text("Diésel: ${_selectedStation!.fuelPriceDiesel} €/L"),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Cerrar el bottomSheet
-                  },
-                  child: const Text("Cerrar", style: TextStyle(color: Colors.red)),
-                ),
-              ],
-            ),
+        return AlertDialog(
+          title: Text(_selectedStation!.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Gasolina 95: ${_selectedStation!.fuelPrice95} €/L"),
+              Text("Gasolina 98: ${_selectedStation!.fuelPrice98} €/L"),
+              Text("Diésel: ${_selectedStation!.fuelPriceDiesel} €/L"),
+              SizedBox(height: 10),
+              Text("Dirección: ${_selectedStation!.direction}"),
+            ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cierra el diálogo
+              },
+              child: const Text("Cerrar", style: TextStyle(color: Colors.red)),
+            ),
+          ],
         );
       },
     );
@@ -146,7 +144,7 @@ class _MapScreenState extends State<MapScreen> {
                             setState(() {
                               _selectedStation = station;
                             });
-                            _showStationInfo(context); // Mostrar el modal
+                            _showStationInfo(context); // Mostrar la información en el modal
                           },
                           child: CircleAvatar(
                             radius: 25.0,
@@ -160,7 +158,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                       );
-                    }),
+                    }).toList(),
                   ],
                 ),
               ],

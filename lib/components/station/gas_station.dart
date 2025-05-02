@@ -5,6 +5,8 @@ class GasStation {
   final String fuelPrice95;
   final String fuelPrice98;
   final String fuelPriceDiesel;
+  final String direction;
+
 
   GasStation({
     required this.name,
@@ -13,6 +15,8 @@ class GasStation {
     required this.fuelPrice95,
     required this.fuelPrice98,
     required this.fuelPriceDiesel,
+    required this.direction,
+
   });
 
   factory GasStation.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,7 @@ class GasStation {
       fuelPrice95: json['Gasolina95'] ?? 'N/A',
       fuelPrice98: json['Gasolina98'] ?? 'N/A',
       fuelPriceDiesel: json['Diesel'] ?? 'N/A',
+      direction: json['direccion'] ?? 'N/A',
     );
   }
 }

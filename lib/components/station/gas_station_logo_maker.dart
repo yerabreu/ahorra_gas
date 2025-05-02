@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GasStationLogoMarker extends StatelessWidget {
-  final String logoPath; // Ruta del logo de la gasolinera
-  final double size; // Tamaño de la burbuja
-  final Color backgroundColor; // Color de fondo de la burbuja
-
+  final String logoPath; 
+  final double size; 
+  final Color backgroundColor; 
   const GasStationLogoMarker({
     super.key,
     required this.logoPath,
@@ -19,7 +18,7 @@ class GasStationLogoMarker extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(size / 2), // Esto crea la forma redonda
+        borderRadius: BorderRadius.circular(size / 2), 
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
@@ -31,8 +30,8 @@ class GasStationLogoMarker extends StatelessWidget {
       ),
       child: ClipOval(
         child: Image.asset(
-          logoPath, // Ruta del logo de la gasolinera
-          fit: BoxFit.cover, // Ajuste para que la imagen ocupe todo el espacio sin distorsionarse
+          logoPath, 
+          fit: BoxFit.cover, 
         ),
       ),
     );
