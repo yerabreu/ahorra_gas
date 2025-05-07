@@ -4,16 +4,17 @@ import 'package:ahorra_gas/components/station/gas_station_api.dart';
 import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ahorra_gas/components/station/gas_station_cache.dart'; // Asegúrate de tener esta clase importada
 
 class FuelNintyEight extends StatefulWidget {
   const FuelNintyEight({super.key});
 
   @override
-  State<FuelNintyEight> createState() => _FuelNintyFiveState();
+  _FuelNintyEightState createState() => _FuelNintyEightState();
 }
 
-class _FuelNintyFiveState extends State<FuelNintyEight> {
- List<GasStation> _stations = [];
+class _FuelNintyEightState extends State<FuelNintyEight> {
+  List<GasStation> _stations = [];
   bool _isLoading = true;
   double? _latitude;
   double? _longitude;
@@ -21,7 +22,23 @@ class _FuelNintyFiveState extends State<FuelNintyEight> {
   @override
   void initState() {
     super.initState();
-    _loadCurrentLocation();
+    _loadStations();
+  }
+
+  Future<void> _loadStations() async {
+    final cache = GasStationCache();
+
+    // Si ya hay estaciones guardadas en caché, las cargamos
+    if (cache.cachedStations != null && cache.cachedStations!.isNotEmpty) {
+      setState(() {
+        _stations = cache.cachedStations!;
+        _isLoading = false;
+      });
+      return; // Si tienes estaciones en caché, no hace falta hacer nada más
+    }
+
+    // Si no hay caché, obtenemos la ubicación y luego las estaciones
+    await _loadCurrentLocation();
   }
 
   Future<void> _loadCurrentLocation() async {
@@ -40,11 +57,14 @@ class _FuelNintyFiveState extends State<FuelNintyEight> {
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    setState(() {
-      _latitude = position.latitude;
-      _longitude = position.longitude;
-      _isLoading = true; 
-    });
+    // Actualiza el estado solo si el widget está montado
+    if (mounted) {
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+        _isLoading = true;
+      });
+    }
 
     await _loadGasStations();
   }
@@ -58,21 +78,34 @@ class _FuelNintyFiveState extends State<FuelNintyEight> {
       if (municipioId != null) {
         List<GasStation> estaciones = await getGasStations(municipioId);
 
+        // Ordena las estaciones por precio de gasolina 98
         estaciones.sort((a, b) => a.fuelPrice98.compareTo(b.fuelPrice98));
 
-        setState(() {
-          _stations = estaciones;
-          _isLoading = false; 
-        });
+        final cache = GasStationCache();
+        cache.cachedStations = estaciones; // Guardamos las estaciones en caché
+        cache.cachedMunicipioId = municipioId;
+        cache.lastLatitude = _latitude;
+        cache.lastLongitude = _longitude;
+
+        if (mounted) {
+          setState(() {
+            _stations = estaciones;
+            _isLoading = false;
+          });
+        }
       } else {
-        setState(() {
-          _isLoading = false; 
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar las estaciones: $e')),
       );
@@ -133,7 +166,7 @@ class _FuelNintyFiveState extends State<FuelNintyEight> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Precio Gasolina 95: ${station.fuelPrice98} €/L',
+                            'Precio Gasolina 98: ${station.fuelPrice98} €/L',
                           ),
                           Text('Dirección: ${station.direction}'),
                         ],

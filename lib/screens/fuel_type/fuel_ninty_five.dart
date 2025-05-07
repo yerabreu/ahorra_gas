@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ahorra_gas/components/station/gas_station.dart';
 import 'package:ahorra_gas/components/station/gas_station_api.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ahorra_gas/components/station/gas_station_cache.dart';
 
 class FuelNintyFive extends StatefulWidget {
   const FuelNintyFive({super.key});
@@ -21,7 +22,21 @@ class _FuelNintyFiveState extends State<FuelNintyFive> {
   @override
   void initState() {
     super.initState();
-    _loadCurrentLocation();
+    _loadStations();
+  }
+
+  Future<void> _loadStations() async {
+    final cache = GasStationCache();
+
+    if (cache.cachedStations != null && cache.cachedStations!.isNotEmpty) {
+      setState(() {
+        _stations = cache.cachedStations!;
+        _isLoading = false;
+      });
+      return; // Si ya tienes datos en cache, no haces nada más
+    }
+
+    await _loadCurrentLocation();
   }
 
   Future<void> _loadCurrentLocation() async {
@@ -43,7 +58,7 @@ class _FuelNintyFiveState extends State<FuelNintyFive> {
     setState(() {
       _latitude = position.latitude;
       _longitude = position.longitude;
-      _isLoading = true; 
+      _isLoading = true;
     });
 
     await _loadGasStations();
@@ -60,13 +75,19 @@ class _FuelNintyFiveState extends State<FuelNintyFive> {
 
         estaciones.sort((a, b) => a.fuelPrice95.compareTo(b.fuelPrice95));
 
+        final cache = GasStationCache();
+        cache.cachedStations = estaciones; // Guardamos en caché
+        cache.cachedMunicipioId = municipioId;
+        cache.lastLatitude = _latitude;
+        cache.lastLongitude = _longitude;
+
         setState(() {
           _stations = estaciones;
-          _isLoading = false; 
+          _isLoading = false;
         });
       } else {
         setState(() {
-          _isLoading = false; 
+          _isLoading = false;
         });
       }
     } catch (e) {
@@ -110,7 +131,7 @@ class _FuelNintyFiveState extends State<FuelNintyFive> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) 
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView.builder(
