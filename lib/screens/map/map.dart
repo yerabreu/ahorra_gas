@@ -5,7 +5,7 @@ import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:ahorra_gas/components/station/gas_station_logo_maker.dart';
+import 'package:ahorra_gas/components/station/gas_station_cache.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -17,8 +17,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _currentPosition;
   List<GasStation> _stations = [];
-  bool _isInfoVisible = false; // Para controlar si mostrar la información de la gasolinera
-  GasStation? _selectedStation; // Para guardar la gasolinera seleccionada
+  GasStation? _selectedStation;
 
   @override
   void initState() {
@@ -42,25 +41,32 @@ class _MapScreenState extends State<MapScreen> {
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    });
+    if (!mounted) return;
 
-    await _loadGasStations();
-  }
+    final lat = position.latitude;
+    final lon = position.longitude;
 
-  Future<void> _loadGasStations() async {
-    if (_currentPosition == null) return;
+    _currentPosition = LatLng(lat, lon);
+    setState(() {});
 
-    final lat = _currentPosition!.latitude;
-    final lon = _currentPosition!.longitude;
+    final cache = GasStationCache();
+
+    if (cache.isCacheValid(lat, lon)) {
+      _stations = cache.cachedStations!;
+      setState(() {});
+      return;
+    }
 
     int? municipioId = await getMunicipioId(lat, lon);
     if (municipioId != null) {
       List<GasStation> estaciones = await getGasStations(municipioId);
-      setState(() {
-        _stations = estaciones;
-      });
+      if (!mounted) return;
+      _stations = estaciones;
+      cache.cachedStations = estaciones;
+      cache.cachedMunicipioId = municipioId;
+      cache.lastLatitude = lat;
+      cache.lastLongitude = lon;
+      setState(() {});
     }
   }
 
@@ -79,12 +85,12 @@ class _MapScreenState extends State<MapScreen> {
     return logoMapping[firstWord] ?? 'lib/assets/gaslogo/default.png';
   }
 
-  // Método para mostrar el dialog de información de la gasolinera
   void _showStationInfo(BuildContext context) {
+    if (!mounted || _selectedStation == null) return;
+
     showDialog(
       context: context,
-      barrierDismissible: true, // Permite cerrar el dialog al tocar fuera
-      builder: (BuildContext context) {
+      builder: (_) {
         return AlertDialog(
           title: Text(_selectedStation!.name),
           content: Column(
@@ -94,15 +100,13 @@ class _MapScreenState extends State<MapScreen> {
               Text("Gasolina 95: ${_selectedStation!.fuelPrice95} €/L"),
               Text("Gasolina 98: ${_selectedStation!.fuelPrice98} €/L"),
               Text("Diésel: ${_selectedStation!.fuelPriceDiesel} €/L"),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text("Dirección: ${_selectedStation!.direction}"),
             ],
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Cierra el diálogo
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cerrar", style: TextStyle(color: Colors.red)),
             ),
           ],
@@ -141,10 +145,11 @@ class _MapScreenState extends State<MapScreen> {
                         height: 40,
                         child: GestureDetector(
                           onTap: () {
+                            if (!mounted) return;
                             setState(() {
                               _selectedStation = station;
                             });
-                            _showStationInfo(context); // Mostrar la información en el modal
+                            _showStationInfo(context);
                           },
                           child: CircleAvatar(
                             radius: 25.0,
