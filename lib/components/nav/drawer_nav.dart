@@ -9,52 +9,56 @@ class DrawerNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        color: ColorApp.principalColor,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 150),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              _createDrawerItem(
-                icon: Icons.home,
-                text: 'Inicio',
-                onTap: () {
-                  Navigator.pop(context); // Cierra el Drawer
-                  onItemSelected(0); // Cambia al índice 0 (Inicio)
-                },
-              ),
-              _createDrawerItem(
-                icon: Icons.settings,
-                text: 'Configuración',
-                onTap: () {},
-                isExperimental: true,
-              ),
-              _createDrawerItem(
-                icon: Icons.account_circle,
-                text: 'Perfil',
-                onTap: () {},
-                isExperimental: true,
-              ),
-              _createDrawerItem(
-                icon: Icons.logout,
-                text: 'Cerrar sesión',
-                onTap: () {},
-                isExperimental: true,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 120),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    "lib/assets/img/logo.png",
-                    width: 200,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            color: ColorApp.principalColor,
+            child: Padding(
+              padding: EdgeInsets.only(top: constraints.maxHeight * 0.1), // Ajuste de padding según la altura
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _createDrawerItem(
+                    icon: Icons.home,
+                    text: 'Inicio',
+                    onTap: () {
+                      Navigator.pop(context); // Cierra el Drawer
+                      onItemSelected(0); // Cambia al índice 0 (Inicio)
+                    },
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
+                  _createDrawerItem(
+                    icon: Icons.settings,
+                    text: 'Configuración',
+                    onTap: () {},
+                    isExperimental: true,
+                  ),
+                  _createDrawerItem(
+                    icon: Icons.account_circle,
+                    text: 'Perfil',
+                    onTap: () {},
+                    isExperimental: true,
+                  ),
+                  _createDrawerItem(
+                    icon: Icons.logout,
+                    text: 'Cerrar sesión',
+                    onTap: () {},
+                    isExperimental: true,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: constraints.maxHeight * 0.2), // Ajuste de padding
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        "lib/assets/img/logo.png",
+                        width: constraints.maxWidth * 0.5, // Ajuste proporcional al tamaño de la pantalla
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -66,18 +70,26 @@ class DrawerNav extends StatelessWidget {
     bool isExperimental = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30),
+      padding: const EdgeInsets.only(bottom: 20), // Ajuste de padding para mayor separación
       child: ListTile(
-        leading: Icon(icon, color: ColorApp.colorButton, size: 30),
+        leading: Icon(
+          icon, 
+          color: ColorApp.colorButton, 
+          size: 28, // Tamaño más pequeño de los iconos
+        ),
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: ColorApp.letterColor,
+            // El texto será más dinámico y adaptado al espacio disponible
+            Expanded(
+              child: Text(
+                text,
+                overflow: TextOverflow.ellipsis, // Texto largo se recorta con '...'
+                style: TextStyle(
+                  fontSize: 16, // Ajuste de tamaño de fuente
+                  fontWeight: FontWeight.w600,
+                  color: ColorApp.letterColor,
+                ),
               ),
             ),
             if (isExperimental)
