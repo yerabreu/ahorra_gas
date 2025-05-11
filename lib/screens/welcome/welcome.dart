@@ -41,16 +41,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorApp.principalColor,
         foregroundColor: ColorApp.letterColor,
-        toolbarHeight: 230,
+        toolbarHeight: screenHeight * 0.3,
         flexibleSpace: Center(
           child: Image.asset(
             'lib/assets/img/logo.png',
-            width: 200,
-            height: 200,
+            width: screenWidth * 0.5,
+            height: screenHeight * 0.25,
             fit: BoxFit.cover,
           ),
         ),
@@ -59,11 +62,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         children: [
           Container(
             width: double.infinity,
-            height: 400,
-            color: const Color.fromARGB(101, 131, 133, 134),
+            height: screenHeight * 0.4,
+            color: const Color.fromARGB(
+              101,
+              131,
+              133,
+              134,
+            ),
             child: Lottie.asset(
               'lib/assets/img/fuel_level_indicator.json',
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
           const Spacer(),
@@ -71,7 +79,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
             child: SizedBox(
               width: double.infinity,
-              height: 50,
+              height: screenHeight * 0.07,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _handleStart,
                 style: ElevatedButton.styleFrom(
@@ -93,15 +101,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     : const Text(
                         '¡Empieza ahorrar!',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
               ),
             ),
           ),
-                    const Spacer(),
-
+          const Spacer(),
         ],
       ),
     );
