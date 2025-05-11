@@ -28,7 +28,6 @@ class _MainNavScreenState extends State<MainNavScreen> {
     FuelDiesel(),      
   ];
 
-  // Cuando se hace clic en un ítem del BottomNavigationBar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;  
@@ -38,7 +37,13 @@ class _MainNavScreenState extends State<MainNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            drawer: DrawerNav(),
+    drawer: DrawerNav(
+      onItemSelected: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+    ),
 
       appBar: UpNav(),
       
