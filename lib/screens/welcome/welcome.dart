@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ahorra_gas/components/ubication/my_location.dart';
 import 'package:ahorra_gas/components/nav/main_nav.dart';
 import 'package:ahorra_gas/color/color_app.dart';
+import 'package:lottie/lottie.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -59,9 +60,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Container(
             width: double.infinity,
             height: 400,
-            color: const Color.fromARGB(255, 73, 0, 0),
-            child: Image.asset(
-              'lib/assets/img/gasprice.gif',
+            color: const Color.fromARGB(101, 131, 133, 134),
+            child: Lottie.asset(
+              'lib/assets/img/fuel_level_indicator.json',
               fit: BoxFit.cover,
             ),
           ),
@@ -99,6 +100,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
           ),
+                    const Spacer(),
+
         ],
       ),
     );
