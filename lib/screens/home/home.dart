@@ -9,6 +9,7 @@ import 'package:ahorra_gas/screens/fuel_type/fuel_ninty_eight.dart';
 import 'package:ahorra_gas/screens/fuel_type/fuel_ninty_five.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:carousel_slider/carousel_slider.dart'; 
 
 class PrincipalScreen extends StatefulWidget {
   const PrincipalScreen({super.key});
@@ -25,7 +26,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   @override
   void initState() {
     super.initState();
-    _getLocation(); // Obtener ubicación al iniciar
+    _getLocation();
   }
 
   Future<void> _getLocation() async {
@@ -58,7 +59,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
 
     final cache = GasStationCache();
 
-    // Comprobamos si el cache es válido. Si lo es, usamos los datos del cache.
     if (cache.isCacheValid(lat, lon)) {
       setState(() {
         _stations = cache.cachedStations!;
@@ -67,7 +67,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
       return;
     }
 
-    // Si no es válido, cargamos los datos de la API
     setState(() {
       _isLoading = true;
     });
@@ -78,7 +77,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
     if (municipioId != null) {
       List<GasStation> stations = await getGasStations(municipioId);
 
-      // Guardar en caché solo si obtenemos estaciones
       if (stations.isNotEmpty) {
         cache.cachedStations = stations;
         cache.cachedMunicipioId = municipioId;
@@ -86,14 +84,12 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
         cache.lastLongitude = lon;
       }
 
-      // Actualizamos la UI con las estaciones obtenidas
       if (!mounted) return;
       setState(() {
         _stations = stations;
         _isLoading = false;
       });
     } else {
-      // Si no encontramos el municipio o ocurre algún error
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -125,16 +121,30 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
             padding: const EdgeInsets.all(13.0),
             child: Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                // Carrusel de imágenes (Promociones o imágenes relacionadas)
+                CarouselSlider(
+                  options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 0.9,
                   ),
-                  child: Image.asset(
-                    "lib/assets/img/gas_station.jpg",
-                    fit: BoxFit.cover,
-                  ),
+                  items:
+                      [
+                            'lib/assets/img/promotion.png',
+                            'lib/assets/img/promotion2.jpg',
+                            'lib/assets/img/promotion3.jpg',
+                            'lib/assets/img/promotion4.jpg',
+                          ]
+                          .map(
+                            (item) => Image.asset(
+                              item,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          .toList(),
                 ),
                 const SizedBox(height: 20),
                 const Row(
@@ -159,7 +169,9 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const FuelNintyFive()),
+                          MaterialPageRoute(
+                            builder: (_) => const FuelNintyFive(),
+                          ),
                         );
                       },
                       child: const WidgetFuelType(
@@ -172,7 +184,9 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const FuelNintyEight()),
+                          MaterialPageRoute(
+                            builder: (_) => const FuelNintyEight(),
+                          ),
                         );
                       },
                       child: const WidgetFuelType(
@@ -213,42 +227,46 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : _stations.isEmpty
-                        ? const Text("No se encontraron gasolineras.")
-                        : Column(
-                            children: _stations.map((station) {
-                              return Card(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                    ? const Text("No se encontraron gasolineras.")
+                    : Column(
+                      children:
+                          _stations.map((station) {
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                    _getLogoPath(station.name),
+                                  ),
+                                  radius: 24,
                                 ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage(_getLogoPath(station.name)),
-                                    radius: 24,
+                                title: Text(
+                                  station.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  title: Text(
-                                    station.name,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(station.direction),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Marca: ${station.name}',
-                                        style: const TextStyle(
-                                            color: Colors.grey, fontSize: 13),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(station.direction),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Marca: ${station.name}',
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 13,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            }).toList(),
-                          ),
+                              ),
+                            );
+                          }).toList(),
+                    ),
               ],
             ),
           ),
