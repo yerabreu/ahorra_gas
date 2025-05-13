@@ -23,4 +23,4 @@ Gracias a Flutter, la app es **multiplataforma**, lo que significa que funciona 
 - **precioil.es** — Para obtener los datos actualizados.
 
 ## 👨‍🎓 Autor
-Proyecto realizado por [Yeray Abreu González] como parte del trabajo final del ciclo formativo de Desarrollo de Aplicaciones Multiplataforma (DAM).
+Proyecto realizado por **Yeray Abreu González** como parte del trabajo final del ciclo formativo de Desarrollo de Aplicaciones Multiplataforma (DAM).
